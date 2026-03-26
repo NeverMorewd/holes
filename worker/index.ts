@@ -55,6 +55,12 @@ async function handleApi(request: Request, url: URL, env: Env): Promise<Response
     return json({ status: 'ok', timestamp: new Date().toISOString() });
   }
 
+  // Location (from Cloudflare IP geo)
+  if (segments[0] === 'location') {
+    const cf = (request as Request & { cf?: IncomingRequestCfProperties }).cf;
+    return json({ city: cf?.city ?? null, region: cf?.region ?? null, country: cf?.country ?? null });
+  }
+
   // Weather
   if (segments[0] === 'weather') {
     return handleWeather(url.searchParams);

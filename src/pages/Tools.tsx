@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { api, type WeatherData, type ExchangeData } from '../lib/api'
 
 const WMO_CODES: Record<number, string> = {
@@ -14,21 +14,35 @@ const WMO_CODES: Record<number, string> = {
 const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
 function WeatherWidget() {
-  const [city, setCity] = useState('Beijing')
+  const [city, setCity] = useState('')
   const [data, setData] = useState<WeatherData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  async function search() {
-    if (!city.trim()) return
+  useEffect(() => {
+    api.location().then(res => {
+      const detectedCity = res.data?.city
+      if (detectedCity) {
+        setCity(detectedCity)
+        fetchWeather(detectedCity)
+      }
+    }).catch(() => {})
+  }, [])
+
+  async function fetchWeather(target: string) {
+    if (!target.trim()) return
     setLoading(true); setError(null); setData(null)
-    const res = await api.weather(city.trim()).catch(() => null)
+    const res = await api.weather(target.trim()).catch(() => null)
     setLoading(false)
     if (!res || !res.success || !res.data) {
       setError(res?.error?.message ?? 'Request failed')
     } else {
       setData(res.data)
     }
+  }
+
+  async function search() {
+    fetchWeather(city)
   }
 
   return (
