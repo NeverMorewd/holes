@@ -1,4 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom'
+import ThemeToggle from './ThemeToggle'
 
 export default function Layout() {
   return (
@@ -29,6 +30,7 @@ export default function Layout() {
             </NavLink>
           </li>
         </ul>
+        <ThemeToggle />
       </nav>
 
       <main className="main-content">

@@ -19,6 +19,7 @@
   --text-dim:     rgba(0, 255, 65, 0.5);
   --error:        #FF4141;
   --warning:      #FFB000;
+  --font:         'Share Tech Mono', 'Courier New', Courier, monospace;
 }
 
 *, *::before, *::after {
@@ -34,7 +35,7 @@ html {
 body {
   background-color: var(--bg);
   color: var(--green);
-  font-family: 'Share Tech Mono', 'Courier New', Courier, monospace;
+  font-family: var(--font);
   font-size: 14px;
   line-height: 1.7;
   min-height: 100vh;
@@ -708,4 +709,112 @@ select option {
     padding: 0.3rem 0.5rem;
     font-size: 0.78rem;
   }
+}
+
+/* ============================================================
+   THEMES
+   ============================================================ */
+
+/* ── LIGHT ─────────────────────────────────────────────────── */
+html[data-theme="light"] {
+  --font:         -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  --green:        #334155;
+  --green-dim:    #64748b;
+  --green-bright: #1d4ed8;
+  --green-dark:   #dbeafe;
+  --bg:           #f1f5f9;
+  --panel:        #ffffff;
+  --panel-alt:    #f8fafc;
+  --border:       #e2e8f0;
+  --border-bright:#93c5fd;
+  --glow:         rgba(29, 78, 216, 0.12);
+  --glow-strong:  rgba(29, 78, 216, 0.2);
+  --text-dim:     rgba(51, 65, 85, 0.45);
+  --error:        #dc2626;
+  --warning:      #d97706;
+}
+
+/* ── DARK ──────────────────────────────────────────────────── */
+html[data-theme="dark"] {
+  --font:         -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --green:        #c9d1d9;
+  --green-dim:    #8b949e;
+  --green-bright: #58a6ff;
+  --green-dark:   #0d1117;
+  --bg:           #0d1117;
+  --panel:        #161b22;
+  --panel-alt:    #1c2128;
+  --border:       #21262d;
+  --border-bright:#388bfd;
+  --glow:         rgba(88, 166, 255, 0.12);
+  --glow-strong:  rgba(88, 166, 255, 0.2);
+  --text-dim:     rgba(201, 209, 217, 0.4);
+  --error:        #f85149;
+  --warning:      #e3b341;
+}
+
+/* ── MINIMAL ───────────────────────────────────────────────── */
+html[data-theme="minimal"] {
+  --font:         'Georgia', 'Times New Roman', serif;
+  --green:        #171717;
+  --green-dim:    #737373;
+  --green-bright: #000000;
+  --green-dark:   #f5f5f5;
+  --bg:           #ffffff;
+  --panel:        #fafafa;
+  --panel-alt:    #f5f5f5;
+  --border:       #e5e5e5;
+  --border-bright:#a3a3a3;
+  --glow:         rgba(0, 0, 0, 0.06);
+  --glow-strong:  rgba(0, 0, 0, 0.1);
+  --text-dim:     rgba(23, 23, 23, 0.4);
+  --error:        #ef4444;
+  --warning:      #f59e0b;
+}
+
+/* ── STEAMPUNK ─────────────────────────────────────────────── */
+html[data-theme="metal"] {
+  --font:         'Share Tech Mono', 'Courier New', monospace;
+  --green:        #c8961e;
+  --green-dim:    #7a5a14;
+  --green-bright: #f0c040;
+  --green-dark:   #1a1008;
+  --bg:           #130e07;
+  --panel:        #1c150a;
+  --panel-alt:    #241b0e;
+  --border:       #3d2c0a;
+  --border-bright:#7a5a14;
+  --glow:         rgba(200, 150, 30, 0.25);
+  --glow-strong:  rgba(240, 192, 64, 0.4);
+  --text-dim:     rgba(200, 150, 30, 0.4);
+  --error:        #e05a2a;
+  --warning:      #d4a030;
+}
+
+/* ── Disable CRT effects for non-glow themes ───────────────── */
+html:is([data-theme="light"], [data-theme="dark"], [data-theme="minimal"]) body::before,
+html:is([data-theme="light"], [data-theme="dark"], [data-theme="minimal"]) body::after {
+  display: none;
+}
+
+/* ── Disable text glows for non-glow themes ────────────────── */
+html:is([data-theme="light"], [data-theme="dark"], [data-theme="minimal"])
+  :is(h1, h2, h3, .navbar-brand, .stat-value, .hero-title, .glow-text) {
+  text-shadow: none;
+}
+
+html:is([data-theme="light"], [data-theme="dark"], [data-theme="minimal"]) .btn:hover,
+html:is([data-theme="light"], [data-theme="dark"], [data-theme="minimal"]) .nav-link.active,
+html:is([data-theme="light"], [data-theme="dark"], [data-theme="minimal"]) .post-item-inner:hover .post-title {
+  text-shadow: none;
+}
+
+/* ── Minimal: no uppercase transforms, softer typography ───── */
+html[data-theme="minimal"] :is(h1, h2, h3, h4, h5, h6, .btn, .nav-link, .tag) {
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+html[data-theme="minimal"] .navbar-brand {
+  text-shadow: none;
 }
