@@ -35,23 +35,20 @@ export async function handlePosts(
       const limit = Math.min(50, Math.max(1, Number(url.searchParams.get('limit') ?? '10')));
       const offset = (page - 1) * limit;
 
-      let query: string;
-      let params: unknown[];
+      const isAdmin = requireAuth(request, apiKey);
+      const conditions: string[] = [];
+      const baseParams: unknown[] = [];
+      if (!isAdmin) { conditions.push('published = 1'); }
+      if (tag) { conditions.push('tags LIKE ?'); baseParams.push(`%"${tag}"%`); }
+      const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-      if (tag) {
-        query = `SELECT id, title, slug, summary, tags, published, views, created_at, updated_at
-                 FROM posts WHERE published = 1 AND tags LIKE ? ORDER BY created_at DESC LIMIT ? OFFSET ?`;
-        params = [`%"${tag}"%`, limit, offset];
-      } else {
-        query = `SELECT id, title, slug, summary, tags, published, views, created_at, updated_at
-                 FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT ? OFFSET ?`;
-        params = [limit, offset];
-      }
-
-      const { results } = await db.prepare(query).bind(...params).all<Post>();
+      const { results } = await db
+        .prepare(`SELECT id, title, slug, summary, tags, published, views, created_at, updated_at FROM posts ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`)
+        .bind(...baseParams, limit, offset)
+        .all<Post>();
       const countRow = await db
-        .prepare(`SELECT COUNT(*) as total FROM posts WHERE published = 1${tag ? ' AND tags LIKE ?' : ''}`)
-        .bind(...(tag ? [`%"${tag}"%`] : []))
+        .prepare(`SELECT COUNT(*) as total FROM posts ${where}`)
+        .bind(...baseParams)
         .first<{ total: number }>();
 
       return json({
