@@ -102,6 +102,8 @@ export const api = {
       }),
   },
 
+  location: () => apiFetch<{ city: string | null; region: string | null; country: string | null }>('/location'),
+
   health: () => apiFetch<{ status: string; timestamp: string }>('/health'),
 
   stats: () => apiFetch<unknown>('/stats'),
