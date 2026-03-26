@@ -1,59 +1,110 @@
-# Worker + D1 Database
+# holes.dev — Personal Terminal
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/d1-template)
+A personal blog and tools site built with React and Cloudflare Workers, themed after the Pip-Boy from Fallout.
 
-![Worker + D1 Template Preview](https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/cb7cb0a9-6102-4822-633c-b76b7bb25900/public)
+## Features
 
-<!-- dash-content-start -->
+- **Blog** — Markdown posts stored in Cloudflare D1, with tag filtering and pagination
+- **Weather** — 7-day forecast for any city (via open-meteo.com, free)
+- **Exchange Rate** — Currency conversion (via open.er-api.com, free)
+- **Pip-Boy Theme** — Fluorescent green CRT aesthetic, fully responsive
 
-D1 is Cloudflare's native serverless SQL database ([docs](https://developers.cloudflare.com/d1/)). This project demonstrates using a Worker with a D1 binding to execute a SQL statement. A simple frontend displays the result of this query:
+## Tech Stack
 
-```SQL
-SELECT * FROM comments LIMIT 3;
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18 + TypeScript + Vite |
+| Backend | Cloudflare Workers |
+| Database | Cloudflare D1 (SQLite) |
+| Deployment | Cloudflare (GitHub integration) |
+| CI | GitHub Actions (type check + build) |
+
+## API
+
+All endpoints under `/api/v1/`. Response format:
+
+```json
+{ "success": true, "data": {}, "error": null, "meta": { "timestamp": "", "version": "1" } }
 ```
 
-The D1 database is initialized with a `comments` table and this data:
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/v1/health` | Health check |
+| GET | `/api/v1/weather?city=Beijing` | 7-day weather forecast |
+| GET | `/api/v1/exchange?from=CNY&to=USD&amount=100` | Currency exchange rate |
+| GET | `/api/v1/posts` | List blog posts (`?page=1&tag=xxx`) |
+| GET | `/api/v1/posts/:slug` | Get single post |
+| POST | `/api/v1/posts` | Create post (requires `Authorization: Bearer <key>`) |
+| PUT | `/api/v1/posts/:slug` | Update post (requires auth) |
+| DELETE | `/api/v1/posts/:slug` | Delete post (requires auth) |
 
-```SQL
-INSERT INTO comments (author, content)
-VALUES
-    ('Kristian', 'Congrats!'),
-    ('Serena', 'Great job!'),
-    ('Max', 'Keep up the good work!')
-;
+CORS is enabled on all API responses — safe to call from mobile or desktop clients.
+
+## Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Copy and edit local secrets
+cp .dev.vars.example .dev.vars
+
+# Apply D1 migrations locally
+npm run migrate:local
+
+# Start Vite (port 5173) + Worker dev server (port 8787) concurrently
+npm run dev
 ```
 
-> [!IMPORTANT]
-> When using C3 to create this project, select "no" when it asks if you want to deploy. You need to follow this project's [setup steps](https://github.com/cloudflare/templates/tree/main/d1-template#setup-steps) before deploying.
+Vite proxies `/api/*` requests to the local Worker, so everything works on `http://localhost:5173`.
 
-<!-- dash-content-end -->
+## Publishing Blog Posts
 
-## Getting Started
+Write operations require an API key. Set the Worker secret once:
 
-Outside of this repo, you can start a new project with this template using [C3](https://developers.cloudflare.com/pages/get-started/c3/) (the `create-cloudflare` CLI):
-
-```
-npm create cloudflare@latest -- --template=cloudflare/templates/d1-template
+```bash
+npx wrangler secret put ADMIN_API_KEY
 ```
 
-A live public deployment of this template is available at [https://d1-template.templates.workers.dev](https://d1-template.templates.workers.dev)
+Then POST to create a post:
 
-## Setup Steps
+```bash
+curl -X POST https://your-worker.workers.dev/api/v1/posts \
+  -H "Authorization: Bearer <your-key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "My First Post",
+    "slug": "my-first-post",
+    "content": "# Hello\n\nMarkdown content here.",
+    "summary": "A short summary.",
+    "tags": ["blog", "hello"],
+    "published": true
+  }'
+```
 
-1. Install the project dependencies with a package manager of your choice:
-   ```bash
-   npm install
-   ```
-2. Create a [D1 database](https://developers.cloudflare.com/d1/get-started/) with the name "d1-template-database":
-   ```bash
-   npx wrangler d1 create d1-template-database
-   ```
-   ...and update the `database_id` field in `wrangler.json` with the new database ID.
-3. Run the following db migration to initialize the database (notice the `migrations` directory in this project):
-   ```bash
-   npx wrangler d1 migrations apply --remote d1-template-database
-   ```
-4. Deploy the project!
-   ```bash
-   npx wrangler deploy
-   ```
+## Database Migrations
+
+```bash
+npm run migrate:local    # Apply to local D1
+npm run migrate:remote   # Apply to production D1
+```
+
+## Project Structure
+
+```
+├── worker/              # Cloudflare Worker (API only)
+│   ├── index.ts         # Router + CORS
+│   ├── lib/response.ts  # JSON response helpers
+│   └── api/
+│       ├── weather.ts
+│       ├── exchange.ts
+│       └── posts.ts     # Blog CRUD
+├── src/                 # React frontend
+│   ├── components/
+│   ├── pages/           # Home, Blog, BlogPost, Tools
+│   ├── lib/api.ts       # Typed API client
+│   └── styles/pipboy.css
+├── migrations/          # D1 SQL migrations
+└── .github/workflows/
+    └── ci.yml           # Type check + build on every push
+```
