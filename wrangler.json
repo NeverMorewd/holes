@@ -1,16 +1,21 @@
 {
-	"compatibility_date": "2025-10-08",
-	"main": "src/index.ts",
-	"name": "holes",
-	"upload_source_maps": true,
-	"d1_databases": [
-		{
-			"binding": "DB",
-			"database_id": "cc6b3ebc-334d-43b4-8cbe-9b0fecc7e909",
-			"database_name": "hole-database"
-		}
-	],
-	"observability": {
-		"enabled": true
-	}
+  "compatibility_date": "2025-10-08",
+  "main": "worker/index.ts",
+  "name": "holes",
+  "upload_source_maps": true,
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_id": "cc6b3ebc-334d-43b4-8cbe-9b0fecc7e909",
+      "database_name": "hole-database"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
 }

@@ -1,0 +1,6 @@
+# Copy this file to .dev.vars for local development
+# .dev.vars is gitignored and used by wrangler for local secrets
+
+# API key for blog post write operations (POST/PUT/DELETE /api/v1/posts)
+# Set this to any secret string you choose
+ADMIN_API_KEY=your-secret-key-here
