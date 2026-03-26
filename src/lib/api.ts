@@ -82,6 +82,24 @@ export const api = {
         headers: { Authorization: `Bearer ${apiKey}` },
         body: JSON.stringify(data),
       }),
+
+    listAll: (apiKey: string, page = 1) =>
+      apiFetch<PostsResponse>(`/posts?page=${page}&limit=50`, {
+        headers: { Authorization: `Bearer ${apiKey}` },
+      }),
+
+    update: (slug: string, data: object, apiKey: string) =>
+      apiFetch<{ slug: string; updated: boolean }>(`/posts/${slug}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify(data),
+      }),
+
+    remove: (slug: string, apiKey: string) =>
+      apiFetch<{ slug: string; deleted: boolean }>(`/posts/${slug}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${apiKey}` },
+      }),
   },
 
   health: () => apiFetch<{ status: string; timestamp: string }>('/health'),
