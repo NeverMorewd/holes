@@ -69,7 +69,7 @@ function WeatherWidget() {
               </span>
             </div>
           )}
-          <div className="weather-grid">
+          <div className="weather-grid" style={{ overflowX: 'auto' }}>
             {data.weather.daily.time.map((date, i) => {
               const d = new Date(date)
               return (
@@ -181,7 +181,7 @@ export default function Tools() {
   return (
     <div>
       <h2 style={{ marginBottom: '1.5rem' }}>FIELD TOOLS</h2>
-      <div className="tools-grid">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         <WeatherWidget />
         <ExchangeWidget />
       </div>
