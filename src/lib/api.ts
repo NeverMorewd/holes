@@ -85,4 +85,6 @@ export const api = {
   },
 
   health: () => apiFetch<{ status: string; timestamp: string }>('/health'),
+
+  stats: () => apiFetch<unknown>('/stats'),
 }

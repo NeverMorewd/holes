@@ -23,6 +23,11 @@ export default function Layout() {
               TOOLS
             </NavLink>
           </li>
+          <li>
+            <NavLink to="/dashboard" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+              STATUS
+            </NavLink>
+          </li>
         </ul>
       </nav>
 

@@ -1,12 +1,15 @@
 import { handleExchange } from './api/exchange';
 import { handleWeather } from './api/weather';
 import { handlePosts, handlePost } from './api/posts';
+import { handleStats } from './api/stats';
 import { json } from './lib/response';
 
 interface Env {
   DB: D1Database;
   ASSETS: Fetcher;
   ADMIN_API_KEY?: string;
+  CF_API_TOKEN?: string;
+  CF_ACCOUNT_ID?: string;
 }
 
 const CORS_HEADERS = {
@@ -69,6 +72,11 @@ async function handleApi(request: Request, url: URL, env: Env): Promise<Response
       return handlePost(request, env.DB, slug, env.ADMIN_API_KEY);
     }
     return handlePosts(request, env.DB, env.ADMIN_API_KEY);
+  }
+
+  // Stats / dashboard
+  if (segments[0] === 'stats') {
+    return handleStats(env);
   }
 
   return json({ error: 'Not found' }, 404);
