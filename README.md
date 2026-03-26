@@ -2,6 +2,7 @@
 
 A personal blog and tools site built with React and Cloudflare Workers, themed after the Pip-Boy from Fallout.
 
+Try it： [My blog](https://holes.nevermore-easley.workers.dev/)
 ## Features
 
 - **Blog** — Markdown posts stored in Cloudflare D1, with tag filtering and pagination
